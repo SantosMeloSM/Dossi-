@@ -497,6 +497,7 @@ button.setting:hover, label.setting:hover { background: var(--surface-2); }
   .view-actions .btn span { display: none; }
   .view-actions .btn { padding: 0 14px; }
   .view-actions .btn.primary span, .view-actions .btn.soft span { display: inline; }
+  .toasts { bottom: calc(96px + var(--safe-b)); }
 }
 @media (max-width: 520px) {
   .form-grid, .details-grid { grid-template-columns: 1fr; }
