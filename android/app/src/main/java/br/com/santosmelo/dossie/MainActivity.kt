@@ -123,8 +123,9 @@ class MainActivity : AppCompatActivity() {
                     if (params.isCaptureEnabled) {
                         val dir = File(cacheDir, "camera").apply { mkdirs() }
                         val photo = File(dir, "foto-${System.currentTimeMillis()}.jpg")
-                        cameraUri = FileProvider.getUriForFile(this@MainActivity, "$packageName.files", photo)
-                        takePicture.launch(cameraUri)
+                        val uri = FileProvider.getUriForFile(this@MainActivity, "$packageName.files", photo)
+                        cameraUri = uri
+                        takePicture.launch(uri)
                     } else {
                         val intent = params.createIntent()
                         if (params.mode == FileChooserParams.MODE_OPEN_MULTIPLE) intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
