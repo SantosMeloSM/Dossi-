@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0d1015" media="(prefers-color-scheme: dark)">
+  <meta name="description" content="Dossiê: cofre pessoal de documentos, criptografado e offline.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; frame-src 'self' blob:; object-src 'self' blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="stylesheet" href="css/app.css">
+  <title>Dossiê</title>
+</head>
+<body>
+  <!-- ============ TELA DE ACESSO ============ -->
+  <section id="auth" class="auth" aria-label="Acesso ao cofre">
+    <div class="auth-side">
+      <div class="brand"><span class="brand-mark" data-i="safe"></span><span class="brand-name">Dossiê</span></div>
+      <div class="auth-hero">
+        <p class="eyebrow">Cofre pessoal de documentos</p>
+        <h1>Tudo o que prova<br>quem você é, <em>guardado</em><br>com você.</h1>
+        <ul class="auth-points">
+          <li><span data-i="lock"></span>Criptografia AES‑256 de ponta a ponta no aparelho</li>
+          <li><span data-i="bell"></span>Avisos antes de cada documento vencer</li>
+          <li><span data-i="people"></span>Documentos da família inteira, organizados</li>
+          <li><span data-i="database"></span>Funciona offline. Nada vai para servidores</li>
+        </ul>
+      </div>
+      <div class="auth-cards" aria-hidden="true">
+        <div class="fake-card c1"><span data-i="idcard"></span><i></i><i></i></div>
+        <div class="fake-card c2"><span data-i="globe"></span><i></i><i></i></div>
+        <div class="fake-card c3"><span data-i="heart"></span><i></i><i></i></div>
+      </div>
+    </div>
+    <div class="auth-main">
+      <div class="auth-panel" id="auth-panel"></div>
+      <p class="auth-foot"><span data-i="shield"></span> Dossiê 2.0 · seus dados ficam só neste aparelho</p>
+    </div>
+  </section>
+
+  <!-- ============ APLICATIVO ============ -->
+  <div id="app" class="app" hidden>
+    <aside class="sidebar" aria-label="Navegação">
+      <div class="brand"><span class="brand-mark" data-i="safe"></span><span class="brand-name">Dossiê</span></div>
+      <button class="btn primary block" data-act="new"><span data-i="plus"></span> Novo documento</button>
+      <nav class="side-nav" id="side-nav">
+        <a href="#/" data-route="home"><span data-i="grid"></span>Início</a>
+        <a href="#/docs" data-route="docs"><span data-i="layers"></span>Documentos<b id="nav-count-docs"></b></a>
+        <a href="#/expiring" data-route="expiring"><span data-i="hourglass"></span>Vencimentos<b id="nav-count-exp" class="warn"></b></a>
+        <a href="#/favorites" data-route="favorites"><span data-i="star"></span>Favoritos</a>
+        <a href="#/trash" data-route="trash"><span data-i="trash"></span>Lixeira<b id="nav-count-trash"></b></a>
+      </nav>
+      <div class="side-group">
+        <div class="side-title">Pessoas <button class="mini" data-act="new-person" aria-label="Adicionar pessoa" title="Adicionar pessoa"><span data-i="plus"></span></button></div>
+        <nav id="side-people" class="side-nav small"></nav>
+      </div>
+      <div class="side-group grow">
+        <div class="side-title">Categorias <button class="mini" data-act="new-category" aria-label="Nova categoria" title="Nova categoria"><span data-i="plus"></span></button></div>
+        <nav id="side-cats" class="side-nav small"></nav>
+      </div>
+      <nav class="side-nav">
+        <a href="#/settings" data-route="settings"><span data-i="sliders"></span>Ajustes</a>
+      </nav>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="brand mobile-only"><span class="brand-mark" data-i="safe"></span><span class="brand-name">Dossiê</span></div>
+        <label class="global-search">
+          <span data-i="search"></span>
+          <input id="global-search" type="search" placeholder="Buscar documentos, números, etiquetas…" autocomplete="off" enterkeyhint="search">
+          <kbd>/</kbd>
+        </label>
+        <div class="top-actions">
+          <button class="icon-btn mobile-only" data-act="toggle-search" aria-label="Buscar" title="Buscar"><span data-i="search"></span></button>
+          <button class="icon-btn" data-act="privacy" aria-label="Ocultar dados sensíveis" title="Ocultar dados sensíveis (P)" id="privacy-btn"><span data-i="eye"></span></button>
+          <button class="icon-btn" data-act="lock" aria-label="Bloquear cofre" title="Bloquear cofre (L)"><span data-i="lock"></span></button>
+        </div>
+      </header>
+      <main id="view" class="view" tabindex="-1"></main>
+    </div>
+
+    <nav class="bottom-nav" aria-label="Navegação principal">
+      <a href="#/" data-route="home"><span data-i="grid"></span><small>Início</small></a>
+      <a href="#/docs" data-route="docs"><span data-i="layers"></span><small>Documentos</small></a>
+      <button class="fab" data-act="new" aria-label="Novo documento"><span data-i="plus"></span></button>
+      <a href="#/expiring" data-route="expiring"><span data-i="hourglass"></span><small>Prazos</small></a>
+      <a href="#/settings" data-route="settings"><span data-i="sliders"></span><small>Ajustes</small></a>
+    </nav>
+  </div>
+
+  <!-- ============ FOLHA: EDITAR DOCUMENTO ============ -->
+  <div class="sheet" id="sheet-edit" hidden role="dialog" aria-modal="true" aria-labelledby="edit-title">
+    <div class="sheet-backdrop" data-close></div>
+    <form class="sheet-card wide" id="edit-form" novalidate>
+      <header class="sheet-head">
+        <div><p class="eyebrow" id="edit-eyebrow">Novo registro</p><h2 id="edit-title">Novo documento</h2></div>
+        <button type="button" class="icon-btn" data-close aria-label="Fechar"><span data-i="x"></span></button>
+      </header>
+      <div class="sheet-body">
+        <section class="attach-zone" id="attach-zone">
+          <div class="attach-list" id="attach-list"></div>
+          <div class="attach-drop" id="attach-drop">
+            <span data-i="paperclip"></span>
+            <div><strong>Anexe frente, verso ou páginas</strong><small>Fotos, PDF ou documentos · até 50 MB cada · arraste ou cole aqui</small></div>
+            <div class="attach-buttons">
+              <label class="btn soft"><span data-i="upload"></span> Arquivo<input type="file" id="file-input" multiple accept="image/*,application/pdf,.pdf,.doc,.docx,.odt,.txt,.xls,.xlsx" hidden></label>
+              <label class="btn soft"><span data-i="camera"></span> Câmera<input type="file" id="camera-input" accept="image/*" capture="environment" hidden></label>
+            </div>
+          </div>
+        </section>
+        <div class="form-grid">
+          <label class="field span2"><span>Nome do documento *</span><input id="f-title" maxlength="120" required placeholder="Ex.: CNH de Ana"></label>
+          <label class="field"><span>Categoria</span><select id="f-category"></select></label>
+          <label class="field"><span>Pessoa</span><select id="f-person"></select></label>
+          <label class="field span2"><span id="f-number-label">Número</span><input id="f-number" maxlength="80" autocomplete="off" inputmode="text"><small class="hint" id="f-number-hint"></small></label>
+          <label class="field"><span>Emissão</span><input id="f-issued" type="date"></label>
+          <label class="field"><span>Validade</span><input id="f-expires" type="date"></label>
+          <div class="field span2 quick-dates" id="quick-dates"></div>
+          <div class="span2 details-grid" id="f-details"></div>
+          <div class="field span2"><span>Etiquetas</span>
+            <div class="tag-input" id="tag-input"><input id="f-tag" placeholder="Digite e pressione Enter" maxlength="30" list="tag-suggestions"></div>
+            <datalist id="tag-suggestions"></datalist>
+          </div>
+          <label class="field span2"><span>Observações</span><textarea id="f-notes" rows="3" maxlength="2000" placeholder="Onde está o original, quem pode acessar, etc."></textarea></label>
+        </div>
+      </div>
+      <footer class="sheet-foot">
+        <button type="button" class="btn ghost" data-close>Cancelar</button>
+        <button type="submit" class="btn primary" id="edit-save"><span data-i="check"></span> Salvar</button>
+      </footer>
+    </form>
+  </div>
+
+  <!-- ============ FOLHA: VER DOCUMENTO ============ -->
+  <div class="sheet" id="sheet-view" hidden role="dialog" aria-modal="true" aria-labelledby="view-title">
+    <div class="sheet-backdrop" data-close></div>
+    <div class="sheet-card wide" id="view-card"></div>
+  </div>
+
+  <!-- ============ VISUALIZADOR EM TELA CHEIA ============ -->
+  <div class="sheet viewer" id="sheet-viewer" hidden role="dialog" aria-modal="true" aria-label="Visualizador">
+    <div class="viewer-bar">
+      <button class="icon-btn" data-close aria-label="Fechar"><span data-i="chevL"></span></button>
+      <strong id="viewer-name"></strong>
+      <div class="viewer-tools">
+        <button class="icon-btn" data-act="viewer-zoom" aria-label="Zoom"><span data-i="zoomIn"></span></button>
+        <button class="icon-btn" data-act="viewer-rotate" aria-label="Girar"><span data-i="rotate"></span></button>
+      </div>
+    </div>
+    <div class="viewer-stage" id="viewer-stage"></div>
+  </div>
+
+  <!-- ============ FOLHA GENÉRICA (categorias, pessoas, recuperação…) ============ -->
+  <div class="sheet" id="sheet-generic" hidden role="dialog" aria-modal="true">
+    <div class="sheet-backdrop" data-close></div>
+    <div class="sheet-card" id="generic-card"></div>
+  </div>
+
+  <input type="file" id="restore-input" accept=".json,application/json" hidden>
+  <div id="dialog" class="dialog" hidden></div>
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
