@@ -15,3 +15,22 @@ APK: app-debug.apk (7.5M)
   ✔ processo ainda vivo ao final
 
 Resultado: 7 ok, 6 falha(s)
+Dossiê – teste automático no emulador Android (API 34)
+APK: app-debug.apk (7.5M)
+  ✔ APK instalado
+  ✔ app iniciado
+  ✔ tela de criação do cofre exibida
+    tela: Dossiê | Acesso ao cofre | Dossiê | COFRE PESSOAL DE DOCUMENTOS | Tudo o que prova quem você é, guardado com você. | PRIMEIRO ACESSO | Crie a senha do seu cofre | Ela protege a chave que cifra todos os documentos. Use algo longo e fácil de lembrar, como uma frase. | Senha (mín. 8 caracteres) | ••••••••••••• | Mostrar senha | Confirme a senha | ••••••••••••• | Mostrar senha | Criar meu cofre | Já tenho um backup | Dossiê 2.0 · seus dados ficam só neste aparelho
+  (enviado com Enter)
+    tela: Dossiê | Dossiê | Buscar | Ocultar dados sensíveis | Bloquear cofre | QUINTA-FEIRA, 12 DE NOVEMBRO | Boa noite. | Seu cofre está pronto. Comece pelo documento que você mais usa. | 0 Documentos | 0 | Documentos | 0 Precisam de atenção | 0 | Precisam de atenção | 0 Favoritos | 0 | Favoritos | 0 B | Arquivos cifrados | Cadastro rápido | Escolha o tipo e os campos certos aparecem. | Identidade RG e CIN | CNH Habilitação | CPF Cadastro de pessoa física | Certidões Nascimento, casamento, óbito | Passaporte Passaporte e vistos | Título de eleitor Zona e seção | Comprovantes Endereço e renda | Veículos CRLV, seguro e IPVA | Trabalho Contratos e carteira | Educação Diplomas e históricos | Saúde Cartões, exames e receitas | Finanças Imposto, contratos, bancos | Seguros e garantias Apólices e notas fiscais | Outros Qualquer arquivo importante | Recentes | Nenhum documento ainda | Fotografe ou anexe
+  ✔ cofre criado e chave de recuperação exibida
+  ✔ painel inicial carregado
+  ✔ editor de documento abriu
+  ✔ documento salvo
+  ✔ reabertura pede a senha (dados persistidos)
+  ✔ desbloqueio com senha funcionou
+  ✔ nenhum crash (FATAL EXCEPTION) no logcat
+  ✔ nenhum erro de JavaScript
+  ✔ processo ainda vivo ao final
+
+Resultado: 12 ok, 0 falha(s)
