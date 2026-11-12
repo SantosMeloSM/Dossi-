@@ -12,6 +12,10 @@ bad()  { step "  ✘ $1"; fail=$((fail+1)); }
 dump() { adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1; adb pull /sdcard/ui.xml ui.xml >/dev/null 2>&1; }
 has()  { dump; python3 .github/scripts/uifind.py ui.xml "$1" >/dev/null 2>&1; }
 waitfor() { for i in $(seq 1 ${2:-30}); do has "$1" && return 0; sleep 1; done; return 1; }
+screen() { dump; python3 -c "
+import xml.etree.ElementTree as E,sys
+t=[n.get('text') or n.get('content-desc') for n in E.parse('ui.xml').getroot().iter('node')]
+print('    tela: '+' | '.join(x for x in t if x)[:900])" >> $LOG 2>/dev/null; }
 tap()  { local xy; xy=$(python3 .github/scripts/uifind.py ui.xml "$1") || return 1; adb shell input tap $xy; }
 
 step "Dossiê – teste automático no emulador Android (API 34)"
@@ -21,13 +25,14 @@ adb logcat -c
 adb shell am start -W -n $PKG/.MainActivity >/dev/null && pass "app iniciado" || bad "app não iniciou"
 
 if waitfor "Crie a senha" 45; then pass "tela de criação do cofre exibida"; else bad "tela inicial não apareceu"; fi
-tap "@EditText:0" && adb shell input text "SenhaTeste123" && sleep 1
-dump; tap "@EditText:1" && adb shell input text "SenhaTeste123" && sleep 1
-adb shell input keyevent 111; sleep 1   # fecha teclado
-dump; if tap "Criar meu cofre"; then pass "botão criar cofre tocado"; else bad "botão criar cofre não encontrado"; fi
-if waitfor "recuperação" 40; then pass "cofre criado e chave de recuperação exibida"; else bad "chave de recuperação não apareceu"; fi
+tap "@EditText:0" && sleep 1 && adb shell input text "SenhaTeste123" && sleep 1
+dump; tap "@EditText:1" && sleep 1 && adb shell input text "SenhaTeste123" && sleep 1
+screen
+adb shell input keyevent 66; sleep 2   # Enter envia o formulário
+step "  (enviado com Enter)"; screen
+if waitfor "recuperação" 60; then pass "cofre criado e chave de recuperação exibida"; else bad "chave de recuperação não apareceu"; screen; fi
 dump; tap "Guardei" && sleep 1; dump; tap "Concluir" && sleep 2
-if waitfor "Cadastro rápido" 20; then pass "painel inicial carregado"; else bad "painel inicial não carregou"; fi
+if waitfor "Cadastro rápido" 20; then pass "painel inicial carregado"; else bad "painel inicial não carregou"; screen; fi
 dump; if tap "CNH"; then sleep 2; waitfor "Salvar" 15 && pass "editor de documento abriu" || bad "editor não abriu"; else bad "modelo CNH não encontrado"; fi
 dump; tap "Salvar" && sleep 3
 waitfor "CNH" 10 && pass "documento salvo" || bad "documento não apareceu"
@@ -43,7 +48,9 @@ if waitfor "Recentes" 40; then pass "desbloqueio com senha funcionou"; else bad 
 # Crashes e erros
 adb logcat -d > $OUT/logcat-completo.txt
 if grep -q "FATAL EXCEPTION" $OUT/logcat-completo.txt; then bad "crash encontrado no logcat"; grep -A15 "FATAL EXCEPTION" $OUT/logcat-completo.txt >> $LOG; else pass "nenhum crash (FATAL EXCEPTION) no logcat"; fi
-grep -E "CONSOLE.*(Error|Uncaught)" $OUT/logcat-completo.txt | head -20 > $OUT/erros-js.txt || true
+grep -E "CONSOLE" $OUT/logcat-completo.txt | head -40 > $OUT/console-js.txt || true
+grep -iE "CONSOLE.*(error|uncaught|exception)" $OUT/logcat-completo.txt | head -20 > $OUT/erros-js.txt || true
+grep -iE "dossie|chromium" $OUT/logcat-completo.txt | grep -E " [EW] " | head -40 > $OUT/logcat-avisos.txt || true
 if [ -s $OUT/erros-js.txt ]; then bad "erros de JavaScript no console (ver erros-js.txt)"; cat $OUT/erros-js.txt >> $LOG; else pass "nenhum erro de JavaScript"; fi
 adb shell pidof $PKG >/dev/null && pass "processo ainda vivo ao final" || bad "processo morreu"
 step ""

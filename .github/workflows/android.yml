@@ -47,6 +47,6 @@ jobs:
           cp android/app/build/outputs/apk/debug/app-debug.apk dist/Dossie-2.0.apk
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f dist/Dossie-2.0.apk dist/teste-emulador.txt dist/erros-js.txt dist/falhas.txt
+          git add -f dist/Dossie-2.0.apk dist/teste-emulador.txt dist/erros-js.txt dist/console-js.txt dist/logcat-avisos.txt dist/falhas.txt
           git commit -m "APK de teste e relatório do emulador [skip ci]" || exit 0
           for i in 1 2 3; do git pull --rebase -q && git push -q && break || sleep 5; done
