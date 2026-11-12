@@ -3,8 +3,11 @@ name: Android APK
 on:
   push:
     branches: ["**"]
-    paths: ["web/**", "android/**", ".github/workflows/android.yml"]
+    paths: ["web/**", "android/**", ".github/workflows/android.yml", ".github/scripts/**"]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -25,3 +28,25 @@ jobs:
         with:
           name: dossie-apk
           path: android/app/build/outputs/apk/debug/*.apk
+      - name: Habilitar KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+      - name: Testar no emulador
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: bash .github/scripts/smoke.sh
+      - name: Publicar APK e relatório no branch
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk dist/Dossie-2.0.apk
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f dist/Dossie-2.0.apk dist/teste-emulador.txt dist/erros-js.txt dist/falhas.txt
+          git commit -m "APK de teste e relatório do emulador [skip ci]" || exit 0
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break || sleep 5; done
