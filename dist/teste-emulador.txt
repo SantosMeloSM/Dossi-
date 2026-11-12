@@ -1,0 +1,17 @@
+Dossiê – teste automático no emulador Android (API 34)
+APK: app-debug.apk (7.5M)
+  ✔ APK instalado
+  ✔ app iniciado
+  ✔ tela de criação do cofre exibida
+  ✔ botão criar cofre tocado
+  ✘ chave de recuperação não apareceu
+  ✘ painel inicial não carregou
+  ✘ modelo CNH não encontrado
+  ✘ documento não apareceu
+  ✘ tela de login não apareceu após reabrir
+  ✘ desbloqueio falhou
+  ✔ nenhum crash (FATAL EXCEPTION) no logcat
+  ✔ nenhum erro de JavaScript
+  ✔ processo ainda vivo ao final
+
+Resultado: 7 ok, 6 falha(s)
