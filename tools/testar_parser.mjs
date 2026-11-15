@@ -13,4 +13,14 @@ for (const s of samples) {
   console.log(`${errs.length ? '✘' : '✔'} ${s.file} [${r.category}] título="${r.title}"`);
   errs.forEach(e => console.log('    ' + e));
 }
+// Textos reais devolvidos pelo ML Kit no emulador (ordem do OCR, sem coordenadas)
+const real = JSON.parse(readFileSync(new URL('./ocr-real.json', import.meta.url)));
+for (const c of real) {
+  const r = analyze(c.text.split(' | ').map(t => ({ t })));
+  const get = k => k.startsWith('details.') ? r.details[k.slice(8)] : k === 'category' ? r.category : r[k];
+  const errs = Object.entries(c.expect).filter(([k, v]) => get(k) !== v).map(([k, v]) => `${k}: "${get(k)}" ≠ "${v}"`);
+  total += Object.keys(c.expect).length; ok += Object.keys(c.expect).length - errs.length;
+  console.log(`${errs.length ? '✘' : '✔'} OCR real: ${c.name}`); errs.forEach(e => console.log('    ' + e));
+}
 console.log(`\n${ok}/${total} campos corretos`);
+process.exitCode = ok === total ? 0 : 1;

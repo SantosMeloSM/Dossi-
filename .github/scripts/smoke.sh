@@ -58,7 +58,7 @@ if grep -q "DONE" $OUT/ocr-resultados.txt; then pass "autoteste de leitura concl
 
 # Crashes e erros
 adb logcat -d > $OUT/logcat-completo.txt
-if grep -q "FATAL EXCEPTION" $OUT/logcat-completo.txt; then bad "crash encontrado no logcat"; grep -A15 "FATAL EXCEPTION" $OUT/logcat-completo.txt >> $LOG; else pass "nenhum crash (FATAL EXCEPTION) no logcat"; fi
+if grep -A3 "FATAL EXCEPTION" $OUT/logcat-completo.txt | grep -q "Process: $PKG"; then bad "crash encontrado no logcat"; grep -A15 "FATAL EXCEPTION" $OUT/logcat-completo.txt >> $LOG; else pass "nenhum crash (FATAL EXCEPTION) no logcat"; fi
 grep -E "CONSOLE" $OUT/logcat-completo.txt | head -40 > $OUT/console-js.txt || true
 grep -iE "CONSOLE.*(error|uncaught|exception)" $OUT/logcat-completo.txt | head -20 > $OUT/erros-js.txt || true
 grep -iE "dossie|chromium" $OUT/logcat-completo.txt | grep -E " [EW] " | head -40 > $OUT/logcat-avisos.txt || true

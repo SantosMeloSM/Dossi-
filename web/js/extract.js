@@ -36,9 +36,9 @@ function toISO(d, m, y) {
 export function findDates(text) {
   const s = N(numView(text));
   const out = [];
-  const re1 = /(?<!\d)(\d{1,2})\s?[\/\-.]\s?(\d{1,2})\s?[\/\-.]\s?(\d{4}|\d{2})(?!\d)/g;
+  const re1 = /(?<!\d)(\d{1,2})\s?[\/\-.]\s?(\d{1,2})\s?[\/\-.]\s?(\d\s?\d{3}|\d{2})(?!\d)/g;
   const re2 = /(?<!\d)(\d{1,2})\s*(?:DE\s+)?(JAN|FEV|FEB|MAR|ABR|APR|MAI|MAY|JUN|JUL|AGO|AUG|SET|SEP|OUT|OCT|NOV|DEZ|DEC)[A-Z]*\.?\s*(?:\/\s*[A-Z]{3,}\.?\s*)?(?:\/|DE)?\s*(\d{4})(?!\d)/g;
-  for (const m of s.matchAll(re1)) { const iso = toISO(m[1], m[2], m[3]); if (iso) out.push({ iso, at: m.index }); }
+  for (const m of s.matchAll(re1)) { const iso = toISO(m[1], m[2], m[3].replace(/\s/g, '')); if (iso) out.push({ iso, at: m.index }); }
   for (const m of s.matchAll(re2)) { const iso = toISO(m[1], MONTHS[m[2]], m[3]); if (iso) out.push({ iso, at: m.index }); }
   return out.sort((a, b) => a.at - b.at).map(x => x.iso);
 }
@@ -57,7 +57,7 @@ function findCPFs(text) {
 // ------------------------------------------------------------------ contexto geométrico
 export function makeCtx(raw) {
   const lines = raw.filter(l => l && String(l.t || '').trim()).map((l, i) => ({
-    t: String(l.t).trim(), x: +l.x || 0, y: +l.y || 0, w: +l.w || 0, h: +l.h || 0, p: +l.p || 0, i
+    t: String(l.t).trim(), x: +l.x || 0, y: +l.y || 0, w: +l.w || 0, h: +l.h || 0, p: +l.p || 0, i, ri: i
   }));
   // Ordem de leitura: página, depois linhas visuais (y), depois x.
   const geo = lines.some(l => l.h > 0);
@@ -100,8 +100,16 @@ function near(ctx, labelRe, pick, opts = {}) {
     // Restante da linha após o rótulo
     const rest = L.t.slice(Math.min(L.t.length, m.index + m[0].length)).replace(/^[\s:.\-–]+/, '');
     if (rest && opts.same !== false && !isLabelOnly(rest)) { const v = pick(rest, L); if (v) return v; }
+    const seen = new Set();
     for (const { line } of candidates(ctx, L, opts.down ?? 3)) {
+      seen.add(line);
       if (opts.skipLabels !== false && isLabelOnly(line.n)) continue;
+      const v = pick(line.t, line);
+      if (v) return v;
+    }
+    // Reserva: as linhas seguintes na ordem em que o OCR as entregou
+    if (ctx.geo) for (const line of ctx.lines.filter(l => l.ri > L.ri && l.ri <= L.ri + 2 && !seen.has(l)).sort((a, b) => a.ri - b.ri)) {
+      if (isLabelOnly(line.n)) continue;
       const v = pick(line.t, line);
       if (v) return v;
     }
@@ -140,7 +148,7 @@ const firstLine = (ctx, re) => ctx.lines.find(l => re.test(l.n));
 
 // ------------------------------------------------------------------ detecção da categoria
 const SIGNALS = {
-  cnh: [[/HABILITACAO/, 5], [/CAT\.?\s*HAB/, 4], [/RENACH/, 4], [/PERMISSAO/, 2], [/\bACC\b/, 1], [/SENATRAN|DENATRAN|DETRAN/, 2], [/(1|PRIMEIRA)\s*[AªºO]?\s*HABILITA/, 3]],
+  cnh: [[/HABILITACAO/, 5], [/CAT\.?\s*HAB/, 4], [/RENACH/, 4], [/PERMISSAO/, 2], [/\bACC\b/, 1], [/SENATRAN|DENATRAN|DETRAN/, 2], [/(\b1\s*[AªºO°2]?|PRIMEIRA)\s*HABILITA/, 3]],
   identidade: [[/REGISTRO GERAL/, 6], [/CARTEIRA DE IDENTIDADE/, 6], [/IDENTIDADE/, 1], [/FILIACAO/, 2], [/NATURALIDADE/, 3], [/INSTITUTO DE IDENTIFICACAO|IIRGD|SSP\b/, 2], [/EXPEDICAO/, 2]],
   cpf: [[/CADASTRO DE PESSOAS? FISICAS?/, 6], [/COMPROVANTE DE INSCRICAO/, 4], [/SITUACAO CADASTRAL/, 5], [/RECEITA FEDERAL/, 2], [/CPF/, 1]],
   certidoes: [[/CERTIDAO/, 5], [/REGISTRO CIVIL/, 4], [/CARTORIO|OFICIO|OFICIAL/, 2], [/MATRICULA/, 2], [/\bLIVRO\b/, 2], [/\bFOLHA\b|\bFLS?\b/, 1], [/\bTERMO\b/, 2]],
@@ -151,7 +159,7 @@ const SIGNALS = {
   educacao: [[/DIPLOMA/, 6], [/CERTIFICADO DE CONCLUSAO|HISTORICO ESCOLAR/, 6], [/UNIVERSIDADE|FACULDADE|CENTRO UNIVERSITARIO/, 3], [/BACHAREL|LICENCIAD|TECNOLOGO|GRAU DE/, 3], [/COLACAO|CONCLUIU|CURSO/, 2]],
   saude: [[/CARTAO NACIONAL DE SAUDE|CARTAO DO SUS|\bSUS\b/, 6], [/\bCNS\b/, 4], [/PLANO DE SAUDE|OPERADORA|BENEFICIARIO|CARTEIRINHA/, 4], [/VACINA|PACIENTE|EXAME|RECEITUARIO|CRM/, 3], [/SAUDE/, 2]],
   comprovantes: [[/CONTA DE (LUZ|AGUA|ENERGIA|GAS)|ENERGIA ELETRICA|SANEAMENTO/, 6], [/FATURA|SEGUNDA VIA|2A VIA/, 2], [/CONSUMO|KWH|LEITURA/, 3], [/UNIDADE CONSUMIDORA|INSTALACAO|CODIGO DO CLIENTE/, 3], [/COMPROVANTE DE (RESIDENCIA|ENDERECO|RENDA)/, 6], [/\bCEP\b/, 1]],
-  financas: [[/IMPOSTO (SOBRE A )?RENDA|IRPF|DIRPF/, 6], [/ANO.?CALENDARIO|EXERCICIO \d{4}/, 3], [/INFORME DE RENDIMENTOS|EXTRATO/, 5], [/BANCO|AGENCIA|CONTA CORRENTE/, 2], [/DECLARACAO/, 1]],
+  financas: [[/IMPOSTO\s*SOBRE\s*A?\s*RENDA|IMPOSTO DE RENDA|IRPF|DIRPF|AJUSTE ANUAL/, 6], [/ANO.?CALENDARIO|EXERCICIO \d{4}/, 3], [/INFORME DE RENDIMENTOS|EXTRATO/, 5], [/BANCO|AGENCIA|CONTA CORRENTE/, 2], [/DECLARACAO/, 1]],
   seguros: [[/APOLICE/, 6], [/SEGURADORA/, 5], [/SEGURADO|SINISTRO|VIGENCIA/, 3], [/NOTA FISCAL|NF-?E|DANFE/, 4], [/GARANTIA/, 3]]
 };
 export function detectCategory(ctx) {
@@ -191,7 +199,7 @@ const X = {
     r.details.cpf = near(ctx, /\bCPF\b/, pickCPF) || findCPFs(ctx.text)[0] || null;
     r.number = near(ctx, /(N[°ºO.]?\s*(DE\s*|DO\s*)?REGISTRO|\bREGISTRO\b)/, pickRe(/(?<!\d)\d{9,11}(?!\d)/, m => m[0].padStart(11, '0')));
     r.expiresAt = near(ctx, /VALIDADE/, pickDate);
-    r.details.primeira = near(ctx, /(1|PRIMEIRA)\s*[AªºO°]?\s*HABILITA/, pickDate);
+    r.details.primeira = near(ctx, /(\b1\s*[AªºO°2]?|PRIMEIRA)\s*HABILITA/, pickDate);
     r.details.nascimento = near(ctx, /NASCIMENTO/, pickDate);
     r.issuedAt = near(ctx, /EMISSAO/, pickDate);
     r.details.classe = near(ctx, /CAT\.?\s*HAB|CATEGORIA/, t => { const m = N(t).match(/(?<![A-Z])(ACC|AB|AC|AD|AE|A|B|C|D|E)(?![A-Z])/); return m ? m[1] : null; });
@@ -329,7 +337,7 @@ const X = {
     r.details.modelo = near(ctx, /MARCA\s*\/?\s*MODELO|\bMARCA\b/, t => { const s = t.replace(/\s+/g, ' ').trim(); return /[A-Za-z]{2}/.test(s) && !isLabelOnly(N(s)) && !/ANO|COR\b/.test(N(s)) ? s.toUpperCase() : null; });
     r.details.ano = near(ctx, /ANO\s*(DE\s*)?(FAB|MOD)|ANO FABRICACAO|FAB\s*\/\s*MOD/, t => { const y = N(numView(t)).match(/\b((?:19|20)\d{2})\s*\/?\s*((?:19|20)\d{2})\b/); return y ? `${y[1]}/${y[2]}` : null; });
     r.details.proprietario = near(ctx, /PROPRIETARIO|\bNOME\b/, pickName);
-    r.number = near(ctx, /N[°ºO.]?\s*(DO\s*)?(CRV|CRLV)|CODIGO DE SEGURANCA|NUMERO DO CRV/, pickRe(/(?<!\d)(\d{9,12})(?!\d)/, m => m[1]));
+    r.number = near(ctx, /\bN[°ºO.]?\s*(DO\s*)?(CRV|CRLV)\b|CODIGO DE SEGURANCA|NUMERO DO CRV/, pickRe(/(?<!\d)(\d{9,12})(?!\d)/, m => m[1]));
     r.issuedAt = near(ctx, /DATA( DE)? EMISSAO|EMITIDO EM|^DATA$/, pickDate);
     return r;
   },
@@ -430,14 +438,11 @@ const X = {
     if (ins) r.details.seguradora = ins.t.replace(/\s+/g, ' ').trim();
     r.details.segurado = near(ctx, /\bSEGURADO\b|\bTITULAR\b|\bCLIENTE\b|DESTINATARIO|COMPRADOR/, pickName);
     r.number = near(ctx, /APOLICE|NOTA FISCAL|N[°º.]?\s*(DA\s*)?NF|PROPOSTA|CERTIFICADO/, pickRe(/(?<!\d)(\d[\d.\-\/ ]{3,24}\d)(?!\d)/, m => m[1].trim()));
-    r.details.bem = near(ctx, /OBJETO|BEM SEGURADO|ITEM SEGURADO|PRODUTO|DESCRICAO/, pickText(3, 80));
+    r.details.bem = near(ctx, /OBJETO|BEM SEGURAD|ITEM SEGURAD|\bITEM\b|PRODUTO|DESCRICAO/, pickText(3, 80));
     const tel = numView(ctx.text).match(/0800\s?\d{3}\s?\d{4}/) || near(ctx, /ASSISTENCIA|TELEFONE|CONTATO|\bSAC\b|CENTRAL/, t => (numView(t).match(/\(?\d{2}\)?\s?\d{4,5}-?\d{4}/) || [])[0] ? [numView(t).match(/\(?\d{2}\)?\s?\d{4,5}-?\d{4}/)[0]] : null);
     if (tel) r.details.contato = tel[0];
-    const vig = ctx.lines.find(l => /VIGENCIA/.test(l.n));
-    if (vig) {
-      const ds = findDates(vig.t + ' ' + (ctx.lines[vig.i + 1]?.t || ''));
-      if (ds.length >= 2) { r.issuedAt = ds[0]; r.expiresAt = ds[1]; }
-    }
+    const vig = near(ctx, /VIGENCIA/, t => { const ds = findDates(t); return ds.length >= 2 ? ds : null; });
+    if (vig) { r.issuedAt = vig[0]; r.expiresAt = vig[1]; }
     r.expiresAt ||= near(ctx, /FIM DE VIGENCIA|VIGENCIA ATE|VALIDADE|TERMINO|GARANTIA ATE/, pickDate);
     r.issuedAt ||= near(ctx, /INICIO|EMISSAO|DATA DA COMPRA/, pickDate);
     return r;

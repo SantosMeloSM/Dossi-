@@ -361,6 +361,12 @@ class MainActivity : AppCompatActivity() {
                     if (score > bestScore) { best = res; bestScore = score; bestRot = rot }
                     if (rot == 0 && score >= 12) break
                 }
+                // Com a foto girada, relê a imagem já na posição correta para as caixas
+                // das linhas ficarem no sentido de leitura (necessário para achar rótulo → valor).
+                if (bestRot != 0) {
+                    val upright = Bitmap.createBitmap(bmp, 0, 0, bmp.width, bmp.height, Matrix().apply { postRotate(bestRot.toFloat()) }, true)
+                    best = Tasks.await(recognizer.process(InputImage.fromBitmap(upright, 0)))
+                }
                 val lines = JSONArray()
                 best?.textBlocks?.forEach { b ->
                     b.lines.forEach { l ->

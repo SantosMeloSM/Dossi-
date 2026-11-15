@@ -1,0 +1,61 @@
+[
+ {
+  "name": "cnh (1ª lido como 12)",
+  "text": "REPÚBLICA FEDERATIVA DO BRASIL | CARTEIRA NACIONAL DE HABILITAÇÃO | DETRAN-SP | NOME | ANA BEATRIZ SOUZA LIMA | DOC. IDENTIDADE / ÖRG. EMISSOR / UF | 12345678 SSP SP | CPF | 390.533.447-05 | FILIAÇÃo | JOSÉ CARLOS LIMA | MARIA HELENA SOUZA LIMA | PERMISSÃO | NO REGISTRO | 04567891234 | OBSERVAÇÕES | A | LOCAL | SÂO PAULO, SP | ACC | VALIDADE | DATA NASCIMENTO | 14/03/1990 | CAT. HAB. | AB | 20/08/2031 | DATA EMISSÃO | 21/08/2021 | 12 HABILITAÇÃO | 05/06/2009 | SP987654321",
+  "expect": {
+   "category": "cnh",
+   "number": "04567891234",
+   "details.nome": "Ana Beatriz Souza Lima",
+   "details.cpf": "390.533.447-05",
+   "details.primeira": "2009-06-05",
+   "details.renach": "SP987654321"
+  }
+ },
+ {
+  "name": "certidão foto",
+  "text": "NOME | MATRÍCULA | REGISTRO CIVIL DAS PESSOAS NATURAIS | PEDRO HENRIQUE MOURA SANTOS | DATA DE NASCIMENTO | REPÚBLICA FEDERATIVA DO BRASIL | 104539 01 55 2012 1 00012 345 0001234 56 | 08/04/2012 | FILIAÇÃO | CERTIDÃO DE NASCIMENTO | Livro: A-123 | SEXO | MARCOS MOURA SANTOS e CLARA MOURA SANTOS | Folha: 45 Termo: 6789 | MASCULINO | Cartório do 29 Ofício de Registro Civil de Belo Horizonte- MG | Data de emissão: 12/07/2012",
+  "expect": {
+   "category": "certidoes",
+   "details.tipo": "Nascimento",
+   "details.livro": "A-123",
+   "details.folha": "45",
+   "details.termo": "6789",
+   "issuedAt": "2012-07-12"
+  }
+ },
+ {
+  "name": "crlv foto",
+  "text": "CERTIFICADO DE REGISTRO E LICENCIAMENTO DE VEÍCULO | SENATRAN CRLV DIGITAL | CÓDIGO RENAVAM | 01234567890 | ANO FABRICAÇÃO/ ANO MODELO | 2019/2020 | MARCA / MODELO/VERSÁo | VW/GOL 1.0L MC4 | CHASSI | 9BWAB4503KTO12345 | NOME | CARLOS EDUARDO PEREIRA | LOCAL | CAMPINAS SP | PLACA | BRA2E19 | NO DO CRV | 234567891011 | COR PREDOMINANTE | PRATA | COMBUSTİVEL | EXERCÍCIO | 2025 | ALCOOL/GASOLINA | CPF / CNPJ | 987.654.321-00 | DATA | 15/01/2025",
+  "expect": {
+   "category": "veiculos",
+   "number": "234567891011",
+   "details.renavam": "01234567890",
+   "details.placa": "BRA2E19",
+   "details.ano": "2019/2020",
+   "details.proprietario": "Carlos Eduardo Pereira"
+  }
+ },
+ {
+  "name": "apólice",
+  "text": "SEGURADORA EXEMPLO S.A. | APÓLICE DE SEGURO AUTOMÓVEL | N° DA APÓLICE | 1234567890 | VIGÊNCIA | 01/02/2025 a 01/02/2 026 | ITEM SEGURAD0 | HONDA CIVIC EXL 2021 | Assistência 24h: 0800 123 4567 | SEGURADO | RAFAEL NUNES BARBOSA",
+  "expect": {
+   "category": "seguros",
+   "number": "1234567890",
+   "issuedAt": "2025-02-01",
+   "expiresAt": "2026-02-01",
+   "details.bem": "HONDA CIVIC EXL 2021",
+   "details.segurado": "Rafael Nunes Barbosa"
+  }
+ },
+ {
+  "name": "IRPF",
+  "text": "DECLARAÇÃO DE AJUSTE ANUAL | IMPOSTO SOBREA RENDA - PESSOA FÍSICA | EXERCİCIO 2025 | NOME | PAULO ROBERTO ALMEIDA | IMPOSTO A RESTITUIR | ANO-CALENDÁRIO 2024 | R$ 1.234,56 | RECEITA FEDERAL DO BRASIL | CPF | 222.333.444-05",
+  "expect": {
+   "category": "financas",
+   "details.ano": "2024",
+   "details.valor": "R$ 1.234,56",
+   "details.nome": "Paulo Roberto Almeida",
+   "details.cpf": "222.333.444-05"
+  }
+ }
+]
