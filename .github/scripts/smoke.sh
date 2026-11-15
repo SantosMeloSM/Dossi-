@@ -2,7 +2,7 @@
 # Teste de fumaça no emulador: instala, abre, cria um cofre e verifica crashes.
 set -u
 OUT=dist; mkdir -p $OUT
-LOG=$OUT/teste-emulador.txt
+LOG=$OUT/teste-emulador.txt; : > $LOG
 APK=$(ls android/app/build/outputs/apk/debug/*.apk | head -1)
 PKG=br.com.santosmelo.dossie
 ok=0; fail=0
@@ -20,6 +20,7 @@ tap()  { local xy; xy=$(python3 .github/scripts/uifind.py ui.xml "$1") || return
 
 step "Dossiê – teste automático no emulador Android (API 34)"
 step "APK: $(basename $APK) ($(du -h $APK | cut -f1))"
+adb logcat -G 16M >/dev/null 2>&1
 adb install -r "$APK" >/dev/null && pass "APK instalado" || bad "falha ao instalar"
 adb logcat -c
 adb shell am start -W -n $PKG/.MainActivity >/dev/null && pass "app iniciado" || bad "app não iniciou"
@@ -44,6 +45,16 @@ adb shell am start -W -n $PKG/.MainActivity >/dev/null
 if waitfor "Bem-vindo de volta" 40; then pass "reabertura pede a senha (dados persistidos)"; else bad "tela de login não apareceu após reabrir"; fi
 dump; tap "@EditText:0" && adb shell input text "SenhaTeste123" && adb shell input keyevent 66
 if waitfor "Recentes" 40; then pass "desbloqueio com senha funcionou"; else bad "desbloqueio falhou"; fi
+
+# Leitura automática com OCR real (ML Kit) nas amostras fictícias
+step ""
+step "Leitura automática (OCR real no aparelho) com documentos fictícios:"
+adb shell am force-stop $PKG; sleep 1
+adb shell am start -n $PKG/.MainActivity --ez selftest true >/dev/null
+for i in $(seq 1 450); do adb logcat -d -s DossieJS:I | grep -q "SELFTEST DONE" && break; sleep 2; done
+adb logcat -d -s DossieJS:I | grep "SELFTEST" | sed 's/^.*SELFTEST /  /' > $OUT/ocr-resultados.txt
+cat $OUT/ocr-resultados.txt >> $LOG
+if grep -q "DONE" $OUT/ocr-resultados.txt; then pass "autoteste de leitura concluído: $(grep DONE $OUT/ocr-resultados.txt | sed 's/.*DONE //') campos corretos"; else bad "autoteste de leitura não terminou"; fi
 
 # Crashes e erros
 adb logcat -d > $OUT/logcat-completo.txt

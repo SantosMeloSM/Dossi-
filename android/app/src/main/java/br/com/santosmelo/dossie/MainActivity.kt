@@ -3,7 +3,15 @@ package br.com.santosmelo.dossie
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.Matrix
+import android.graphics.pdf.PdfRenderer
 import android.net.Uri
+import android.os.ParcelFileDescriptor
+import android.util.Log
+import android.webkit.ConsoleMessage
 import android.os.Bundle
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyPermanentlyInvalidatedException
@@ -26,6 +34,13 @@ import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.exifinterface.media.ExifInterface
+import com.google.android.gms.tasks.Tasks
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.Text
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import org.json.JSONArray
 import androidx.webkit.WebViewAssetLoader
 import org.json.JSONObject
 import java.io.File
@@ -35,6 +50,7 @@ import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
+import java.util.concurrent.Executors
 
 /**
  * Casca nativa do Dossiê: um WebView servindo o app web a partir dos assets
@@ -116,6 +132,10 @@ class MainActivity : AppCompatActivity() {
                 request.url.host != ASSET_HOST
         }
         web.webChromeClient = object : WebChromeClient() {
+            override fun onConsoleMessage(m: ConsoleMessage): Boolean {
+                if (BuildConfig.DEBUG) Log.i("DossieJS", "[${m.messageLevel()}] ${m.message()}")
+                return true
+            }
             override fun onShowFileChooser(view: WebView, callback: ValueCallback<Array<Uri>>, params: FileChooserParams): Boolean {
                 fileCallback?.onReceiveValue(null)
                 fileCallback = callback
@@ -147,7 +167,8 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        if (savedInstanceState == null) web.loadUrl("https://$ASSET_HOST/app/index.html")
+        val selfTest = BuildConfig.DEBUG && intent.getBooleanExtra("selftest", false)
+        if (savedInstanceState == null) web.loadUrl("https://$ASSET_HOST/app/index.html" + if (selfTest) "?selftest=1" else "")
         else web.restoreState(savedInstanceState)
     }
 
@@ -286,6 +307,79 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // ================================================================= leitura de texto (OCR, offline)
+    private val ocrExecutor = Executors.newSingleThreadExecutor()
+    private val recognizer by lazy { TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS) }
+
+    /** Carrega a imagem (corrigindo a orientação EXIF) ou a 1ª página do PDF. */
+    private fun loadBitmap(file: File, mime: String): Bitmap? {
+        if (mime == "application/pdf") {
+            ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY).use { fd ->
+                PdfRenderer(fd).use { pdf ->
+                    if (pdf.pageCount == 0) return null
+                    pdf.openPage(0).use { page ->
+                        val scale = 2200f / maxOf(page.width, page.height)
+                        val bmp = Bitmap.createBitmap((page.width * scale).toInt(), (page.height * scale).toInt(), Bitmap.Config.ARGB_8888)
+                        bmp.eraseColor(Color.WHITE)
+                        page.render(bmp, null, Matrix().apply { setScale(scale, scale) }, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                        return bmp
+                    }
+                }
+            }
+        }
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        BitmapFactory.decodeFile(file.path, bounds)
+        if (bounds.outWidth <= 0) return null
+        var sample = 1
+        while (maxOf(bounds.outWidth, bounds.outHeight) / sample > 3200) sample *= 2
+        val bmp = BitmapFactory.decodeFile(file.path, BitmapFactory.Options().apply { inSampleSize = sample }) ?: return null
+        val deg = when (runCatching { ExifInterface(file.path).getAttributeInt(ExifInterface.TAG_ORIENTATION, 1) }.getOrDefault(1)) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> 90f
+            ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+            ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+            else -> 0f
+        }
+        if (deg == 0f) return bmp
+        return Bitmap.createBitmap(bmp, 0, 0, bmp.width, bmp.height, Matrix().apply { postRotate(deg) }, true)
+    }
+
+    /** Pontuação de legibilidade: palavras com 4+ letras e vogais. */
+    private fun readability(t: Text): Int =
+        Regex("[A-Za-zÀ-ú]{4,}").findAll(t.text).count { Regex("[AEIOUaeiouÀ-ú]").containsMatchIn(it.value) }
+
+    private fun runOcr(file: File, mime: String) {
+        ocrExecutor.execute {
+            try {
+                val bmp = loadBitmap(file, mime) ?: throw IllegalArgumentException("formato não suportado")
+                var best: Text? = null
+                var bestScore = -1
+                var bestRot = 0
+                // Tenta na orientação original; se ler pouco, tenta a foto girada.
+                for (rot in intArrayOf(0, 90, 270, 180)) {
+                    val res = Tasks.await(recognizer.process(InputImage.fromBitmap(bmp, rot)))
+                    val score = readability(res)
+                    if (score > bestScore) { best = res; bestScore = score; bestRot = rot }
+                    if (rot == 0 && score >= 12) break
+                }
+                val lines = JSONArray()
+                best?.textBlocks?.forEach { b ->
+                    b.lines.forEach { l ->
+                        val r = l.boundingBox
+                        lines.put(JSONObject().put("t", l.text)
+                            .put("x", r?.left ?: 0).put("y", r?.top ?: 0)
+                            .put("w", r?.width() ?: 0).put("h", r?.height() ?: 0))
+                    }
+                }
+                val out = JSONObject().put("lines", lines).put("rotation", bestRot).put("score", bestScore)
+                emit("ocr-result", out.toString())
+            } catch (e: Throwable) {
+                emit("ocr-error", e.message ?: "falha na leitura")
+            } finally {
+                file.delete()
+            }
+        }
+    }
+
     // ================================================================= ponte JS
     inner class Bridge {
         @JavascriptInterface fun isBiometricAvailable(): Boolean = biometricAvailable()
@@ -293,6 +387,7 @@ class MainActivity : AppCompatActivity() {
         @JavascriptInterface fun enableBiometric(secretB64: String) = runOnUiThread { this@MainActivity.enableBiometric(secretB64) }
         @JavascriptInterface fun disableBiometric() { clearBiometric(); emit("biometric-disabled", "") }
         @JavascriptInterface fun requestBiometric() = runOnUiThread { this@MainActivity.requestBiometric() }
+        @JavascriptInterface fun isOcrAvailable(): Boolean = true
         @JavascriptInterface fun setSecureScreen(on: Boolean) {
             prefs.edit().putBoolean("secure", on).apply()
             runOnUiThread { applySecureFlag(on) }
@@ -354,6 +449,7 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                     }
+                    "ocr" -> runOcr(file, transferMime)
                     else -> { file.delete(); return false }
                 }
                 true

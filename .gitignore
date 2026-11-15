@@ -6,3 +6,5 @@ android/local.properties
 *.keystore
 .DS_Store
 node_modules/
+web/ocr-samples
+web/ocr-samples-lines.json

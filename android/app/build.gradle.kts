@@ -11,8 +11,8 @@ android {
         applicationId = "br.com.santosmelo.dossie"
         minSdk = 30
         targetSdk = 34
-        versionCode = 20
-        versionName = "2.0.0"
+        versionCode = 21
+        versionName = "2.1.0"
     }
 
     // O app web (pasta /web na raiz do repositório) é empacotado como assets.
@@ -38,4 +38,7 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.9.1")
     implementation("androidx.webkit:webkit:1.11.0")
     implementation("androidx.biometric:biometric:1.1.0")
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
+    // Reconhecimento de texto com modelo embutido no APK: funciona sem internet.
+    implementation("com.google.mlkit:text-recognition:16.0.1")
 }

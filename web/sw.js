@@ -1,9 +1,9 @@
 // Service worker: cache do "casco" do app para funcionar offline.
 // Só arquivos estáticos do próprio app são guardados; documentos ficam no IndexedDB cifrado.
-const VERSION = 'dossie-2.0.0';
+const VERSION = 'dossie-2.1.0';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './css/app.css',
-  './js/app.js', './js/backup.js', './js/crypto.js', './js/data.js', './js/icons.js',
+  './js/app.js', './js/backup.js', './js/crypto.js', './js/data.js', './js/extract.js', './js/icons.js',
   './js/media.js', './js/native.js', './js/store.js', './js/ui.js', './js/vault.js',
   './assets/icon.svg', './assets/icon-192.png', './assets/icon-512.png'
 ];

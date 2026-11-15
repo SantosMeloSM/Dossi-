@@ -381,6 +381,15 @@ button.setting:hover, label.setting:hover { background: var(--surface-2); }
 .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0; }
 .tag-row .tag { padding: 4px 10px; }
 
+/* leitura automática */
+.ocr-status { display: flex; align-items: center; gap: 10px; padding: 10px 14px; margin-bottom: 10px; border-radius: 14px; font-size: 13.5px; font-weight: 550; background: var(--surface-2); color: var(--ink-2); flex-wrap: wrap; }
+.ocr-status > span:nth-child(2) { flex: 1; min-width: 180px; }
+.ocr-status[data-state="ok"] { background: var(--accent-soft); color: var(--accent); }
+.ocr-status[data-state="error"] { background: var(--danger-soft); color: var(--danger); }
+.ocr-status[data-state="busy"] { color: var(--accent); }
+.ocr-status .link { font-size: 13px; }
+.field input.auto, .field select.auto, .field textarea.auto { border-color: color-mix(in srgb, var(--accent) 60%, var(--line-2)); background: color-mix(in srgb, var(--accent) 7%, var(--surface)); }
+
 /* visualização */
 .view-head { background: linear-gradient(180deg, color-mix(in srgb, var(--c) 10%, var(--surface)), var(--surface)); }
 .view-title { display: flex; flex-direction: column; gap: 8px; min-width: 0; }

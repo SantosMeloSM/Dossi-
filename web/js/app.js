@@ -6,6 +6,7 @@ import * as S from './store.js';
 import * as M from './media.js';
 import * as N from './native.js';
 import * as B from './backup.js';
+import * as X from './extract.js';
 import { $, $$, esc, toast, busy, openSheet, closeSheet, topSheet, closeAllSheets, ask, dialogOpen, cancelDialog, copyText } from './ui.js';
 
 // ------------------------------------------------------------------ estado
@@ -534,8 +535,11 @@ function openEditor(doc = null, presetCat = null) {
     id: doc?.id || uid(), original: doc,
     files: (doc?.files || []).map(f => ({ meta: { ...f } })),
     removed: [], tags: [...(doc?.tags || [])],
-    coverId: doc?.coverId ?? null
+    coverId: doc?.coverId ?? null,
+    catLocked: !!(doc || presetCat || r.name === 'cat'), autoTitle: !doc && !!presetCat,
+    personLocked: !!doc || r.name === 'person', lastOcr: null
   };
+  showOcr(null);
   $('#edit-title').textContent = doc ? 'Editar documento' : 'Novo documento';
   $('#edit-eyebrow').textContent = doc ? cat(doc.category).name : 'Novo registro';
   $('#f-category').innerHTML = categories().map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
@@ -639,9 +643,83 @@ async function addFiles(fileList) {
     const item = { meta: { id: uid(), name, mime, size: bytes.length, label: '' }, bytes };
     if (M.isImage(mime)) item.previewUrl = URL.createObjectURL(new Blob([bytes], { type: mime }));
     e.files.push(item);
-    if (!$('#f-title').value.trim()) $('#f-title').value = name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').slice(0, 120);
+    if (!$('#f-title').value.trim() || e.autoTitle) { $('#f-title').value = name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').slice(0, 120); e.autoTitle = true; }
   }
   renderAttachments();
+  return autoRead();
+}
+
+// ------------------------------------------------------------------ leitura automática (OCR)
+function showOcr(kind, text = '') {
+  const el = $('#ocr-status');
+  if (!el) return;
+  if (!kind) { el.hidden = true; el.dataset.state = ''; el.innerHTML = ''; return; }
+  el.hidden = false;
+  el.dataset.state = kind;
+  const ic = kind === 'busy' ? '<span class="spinner"></span>' : icon(kind === 'ok' ? 'sparkle' : kind === 'error' ? 'alert' : 'info');
+  const again = kind !== 'busy' && N.ocrAvailable() ? `<button type="button" class="link" data-act="ocr-rescan">${icon('rotate')} Ler de novo</button>` : '';
+  el.innerHTML = `${ic}<span>${esc(text)}</span>${again}`;
+}
+
+/** Lê os anexos (imagens/PDF) e preenche os campos vazios. */
+async function autoRead(manual = false) {
+  const e = state.edit;
+  if (!e) return;
+  const targets = e.files.filter(f => M.isImage(f.meta.mime) || M.isPdf(f.meta.mime, f.meta.name)).slice(0, 4);
+  if (!targets.length) { if (manual) showOcr('info', 'Anexe uma foto ou PDF do documento para ler os dados.'); return; }
+  if (!N.ocrAvailable()) { showOcr('info', 'A leitura automática dos dados funciona no app Android.'); return; }
+  showOcr('busy', targets.length > 1 ? `Lendo ${targets.length} anexos…` : 'Lendo o documento…');
+  const lines = [];
+  try {
+    for (const [p, f] of targets.entries()) {
+      const bytes = f.bytes || await V.readFile(e.id, f.meta.id);
+      const mime = f.meta.mime && f.meta.mime !== 'application/octet-stream' ? f.meta.mime : (M.isPdf('', f.meta.name) ? 'application/pdf' : 'image/jpeg');
+      const res = await N.recognize(bytes, mime);
+      if (state.edit !== e) return;
+      for (const l of res.lines || []) lines.push({ ...l, p });
+    }
+  } catch (x) { if (state.edit === e) showOcr('error', 'Não foi possível ler o documento: ' + x.message); return; }
+  applyExtraction(lines);
+}
+
+function applyExtraction(lines) {
+  const e = state.edit;
+  const sel = $('#f-category');
+  const probe = X.analyze(lines);
+  let category = sel.value;
+  let switched = false;
+  if (!e.catLocked && probe.detected && probe.detected !== category && categories().some(c => c.id === probe.detected)) {
+    category = probe.detected; sel.value = category; renderDetails(category, readDetails()); switched = true;
+    $('#edit-eyebrow').textContent = cat(category).name;
+  }
+  const r = X.analyze(lines, category);
+  const filled = [];
+  const setIf = (el, v, label) => {
+    if (!el || !v || el.value.trim()) return;
+    if (el.tagName === 'SELECT' && ![...el.options].some(o => o.value === v)) return;
+    el.value = v;
+    el.classList.add('auto');
+    if (el.dataset.type === 'cpf' || el.dataset.type === 'plate') el.dispatchEvent(new Event('input', { bubbles: true }));
+    filled.push(label);
+  };
+  setIf($('#f-number'), r.number, 'número');
+  validateNumber();
+  setIf($('#f-issued'), r.issuedAt, 'emissão');
+  setIf($('#f-expires'), r.expiresAt, 'validade');
+  for (const [k, v] of Object.entries(r.details)) setIf($(`#f-details [data-detail="${CSS.escape(k)}"]`), v, k);
+  const t = $('#f-title');
+  if (r.title && (!t.value.trim() || e.autoTitle)) { t.value = r.title; t.classList.add('auto'); e.autoTitle = true; }
+  // Associa à pessoa cadastrada com o mesmo primeiro nome
+  const nome = r.details.nome || r.details.titular || r.details.segurado || r.details.proprietario;
+  if (nome && !e.personLocked) {
+    const first = norm(nome).split(' ')[0];
+    const p = people().find(x => norm(x.name) === norm(nome) || (x.id !== 'me' && norm(x.name).split(' ')[0] === first));
+    if (p) $('#f-person').value = p.id;
+  }
+  e.lastOcr = { category, detected: probe.detected, filled, result: r, chars: r.chars, text: lines.map(l => l.t).join(' | ') };
+  if (filled.length) showOcr('ok', `${switched ? `Reconheci: ${cat(category).name}. ` : ''}${filled.length} campo(s) preenchido(s) automaticamente — confira antes de salvar.`);
+  else if (r.chars > 20) showOcr('info', `${switched ? `Reconheci: ${cat(category).name}. ` : ''}Não encontrei novos dados para preencher.`);
+  else showOcr('info', 'Não consegui ler o texto. Tente uma foto mais nítida, reta e sem reflexo.');
 }
 function releaseEditUrls() { state.edit?.files.forEach(f => f.previewUrl && URL.revokeObjectURL(f.previewUrl)); }
 
@@ -1145,6 +1223,7 @@ async function act(name, el) {
   const d = findDoc(state.viewId);
   switch (name) {
     case 'new': return openEditor();
+    case 'ocr-rescan': return autoRead(true);
     case 'lock': return lockApp();
     case 'toggle-search': document.body.classList.toggle('search-open'); $('#global-search').focus(); return;
     case 'privacy':
@@ -1325,12 +1404,15 @@ function bind() {
     if (t.matches('[data-filter]')) { state.filters[t.dataset.filter] = t.value; return render(); }
     if (t.id === 'sort') { state.sort = t.value; setPref('sort', t.value); return render(); }
     if (t.matches('[data-setting]')) { state.settings[t.dataset.setting] = Number(t.value); await persistSettings(); armIdle(); render(); return toast('Ajuste salvo.', 'ok', 1500); }
-    if (t.id === 'f-category') return renderDetails(t.value);
+    if (t.id === 'f-category') { if (state.edit) state.edit.catLocked = true; return renderDetails(t.value); }
+    if (t.id === 'f-person' && state.edit) state.edit.personLocked = true;
     if (t.id === 'file-input' || t.id === 'camera-input') { await addFiles([...t.files]); t.value = ''; return; }
     if (t.id === 'restore-input') { const f = t.files[0]; t.value = ''; if (f) restoreBackup(f, t.dataset.fromAuth === '1'); }
   });
   document.addEventListener('input', e => {
     const t = e.target;
+    if (e.isTrusted && t.classList?.contains('auto')) t.classList.remove('auto');
+    if (e.isTrusted && t.id === 'f-title' && state.edit) state.edit.autoTitle = false;
     if (t.id === 'f-number') return validateNumber();
     if (t.matches('[data-label]')) { state.edit.files[Number(t.dataset.label)].meta.label = t.value.trim(); return; }
     if (t.matches('[data-type="cpf"]')) {
@@ -1411,3 +1493,8 @@ async function init() {
   }
 }
 init();
+
+// Autoteste da leitura automática (somente no APK de depuração, com as amostras embutidas).
+if (new URLSearchParams(location.search).has('selftest')) {
+  import('./selftest.js').then(m => m.run({ addFiles, getEdit: () => state.edit, closeEditor: () => closeSheet('sheet-edit') }));
+}

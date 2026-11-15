@@ -84,3 +84,23 @@ export async function openExternally(bytes, name, mime) {
   if (!w) webDownload(new Blob([bytes], { type: mime }), name);
   setTimeout(() => URL.revokeObjectURL(url), 5 * 60_000);
 }
+
+// ---------- leitura de texto (OCR) no aparelho ----------
+export const ocrAvailable = () => { try { return !!N()?.isOcrAvailable?.(); } catch { return false; } };
+let ocrQueue = Promise.resolve();
+let ocrWaiter = null;
+onNativeEvent((type, payload) => {
+  if (!ocrWaiter) return;
+  if (type === 'ocr-result') { const w = ocrWaiter; ocrWaiter = null; try { w.resolve(JSON.parse(payload)); } catch (e) { w.reject(e); } }
+  else if (type === 'ocr-error') { const w = ocrWaiter; ocrWaiter = null; w.reject(new Error(payload || 'falha na leitura')); }
+});
+/** Reconhece o texto de uma imagem ou PDF. Resolve com { lines:[{t,x,y,w,h}], rotation }. */
+export function recognize(bytes, mime) {
+  const job = ocrQueue.then(() => new Promise((resolve, reject) => {
+    const timer = setTimeout(() => { if (ocrWaiter) { ocrWaiter = null; reject(new Error('tempo esgotado')); } }, 120_000);
+    ocrWaiter = { resolve: v => { clearTimeout(timer); resolve(v); }, reject: e => { clearTimeout(timer); reject(e); } };
+    pushBytes(bytes, 'leitura', mime, 'ocr').catch(e => { const w = ocrWaiter; ocrWaiter = null; w?.reject(e); });
+  }));
+  ocrQueue = job.catch(() => {});
+  return job;
+}

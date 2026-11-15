@@ -1,0 +1,263 @@
+[
+ {
+  "file": "cnh.png",
+  "category": "cnh",
+  "expect": {
+   "number": "04567891234",
+   "expiresAt": "2031-08-20",
+   "issuedAt": "2021-08-21",
+   "details.nome": "Ana Beatriz Souza Lima",
+   "details.cpf": "390.533.447-05",
+   "details.nascimento": "1990-03-14",
+   "details.primeira": "2009-06-05",
+   "details.classe": "AB",
+   "details.renach": "SP987654321",
+   "details.orgao": "DETRAN/SP"
+  }
+ },
+ {
+  "file": "cnh_foto.jpg",
+  "category": "cnh",
+  "expect": {
+   "number": "04567891234",
+   "expiresAt": "2031-08-20",
+   "issuedAt": "2021-08-21",
+   "details.nome": "Ana Beatriz Souza Lima",
+   "details.cpf": "390.533.447-05",
+   "details.nascimento": "1990-03-14",
+   "details.primeira": "2009-06-05",
+   "details.classe": "AB",
+   "details.renach": "SP987654321",
+   "details.orgao": "DETRAN/SP"
+  }
+ },
+ {
+  "file": "cnh_deitada.jpg",
+  "category": "cnh",
+  "expect": {
+   "number": "04567891234",
+   "expiresAt": "2031-08-20",
+   "issuedAt": "2021-08-21",
+   "details.nome": "Ana Beatriz Souza Lima",
+   "details.cpf": "390.533.447-05",
+   "details.nascimento": "1990-03-14",
+   "details.primeira": "2009-06-05",
+   "details.classe": "AB",
+   "details.renach": "SP987654321",
+   "details.orgao": "DETRAN/SP"
+  }
+ },
+ {
+  "file": "rg.png",
+  "category": "identidade",
+  "expect": {
+   "number": "23.456.789-0",
+   "issuedAt": "2015-02-10",
+   "details.nome": "Ricardo Alves Pereira",
+   "details.cpf": "123.456.789-09",
+   "details.nascimento": "1985-11-22",
+   "details.naturalidade": "Campinas-SP",
+   "details.filiacao": "Antonio Pereira Neto e Lucia Alves Pereira",
+   "details.orgao": "SSP/SP",
+   "details.uf": "SP"
+  }
+ },
+ {
+  "file": "rg_foto.jpg",
+  "category": "identidade",
+  "expect": {
+   "number": "23.456.789-0",
+   "issuedAt": "2015-02-10",
+   "details.nome": "Ricardo Alves Pereira",
+   "details.cpf": "123.456.789-09",
+   "details.nascimento": "1985-11-22",
+   "details.naturalidade": "Campinas-SP",
+   "details.filiacao": "Antonio Pereira Neto e Lucia Alves Pereira",
+   "details.orgao": "SSP/SP",
+   "details.uf": "SP"
+  }
+ },
+ {
+  "file": "cpf.png",
+  "category": "cpf",
+  "expect": {
+   "number": "529.982.247-25",
+   "issuedAt": "2024-09-02",
+   "details.nome": "Fernanda Costa Ribeiro",
+   "details.nascimento": "1992-07-03",
+   "details.situacao": "Regular"
+  }
+ },
+ {
+  "file": "certidao.png",
+  "category": "certidoes",
+  "expect": {
+   "number": "104539 01 55 2012 1 00012 345 0001234 56",
+   "issuedAt": "2012-07-12",
+   "details.tipo": "Nascimento",
+   "details.nome": "Pedro Henrique Moura Santos",
+   "details.livro": "A-123",
+   "details.folha": "45",
+   "details.termo": "6789"
+  }
+ },
+ {
+  "file": "certidao_foto.jpg",
+  "category": "certidoes",
+  "expect": {
+   "number": "104539 01 55 2012 1 00012 345 0001234 56",
+   "issuedAt": "2012-07-12",
+   "details.tipo": "Nascimento",
+   "details.nome": "Pedro Henrique Moura Santos",
+   "details.livro": "A-123",
+   "details.folha": "45",
+   "details.termo": "6789"
+  }
+ },
+ {
+  "file": "passaporte.png",
+  "category": "passaporte",
+  "expect": {
+   "number": "FX123456",
+   "expiresAt": "2033-02-11",
+   "details.nascimento": "1988-05-17",
+   "details.nome": "Camila Rocha Oliveira",
+   "details.pais": "Brasil",
+   "details.nacionalidade": "Brasileira",
+   "details.tipo": "Comum"
+  }
+ },
+ {
+  "file": "passaporte_foto.jpg",
+  "category": "passaporte",
+  "expect": {
+   "number": "FX123456",
+   "expiresAt": "2033-02-11",
+   "details.nascimento": "1988-05-17",
+   "details.nome": "Camila Rocha Oliveira",
+   "details.pais": "Brasil",
+   "details.nacionalidade": "Brasileira",
+   "details.tipo": "Comum"
+  }
+ },
+ {
+  "file": "titulo.png",
+  "category": "eleitor",
+  "expect": {
+   "number": "1234 5678 0191",
+   "issuedAt": "2019-03-15",
+   "details.nome": "Lucas Gabriel Ferreira",
+   "details.nascimento": "2001-01-30",
+   "details.zona": "0246",
+   "details.secao": "0135",
+   "details.municipio": "Campinas/SP"
+  }
+ },
+ {
+  "file": "crlv.png",
+  "category": "veiculos",
+  "expect": {
+   "details.placa": "BRA2E19",
+   "details.renavam": "01234567890",
+   "details.chassi": "9BWAB45U3KT012345",
+   "details.ano": "2019/2020",
+   "details.modelo": "VW/GOL 1.0L MC4",
+   "details.proprietario": "Carlos Eduardo Pereira",
+   "number": "234567891011"
+  }
+ },
+ {
+  "file": "crlv_foto.jpg",
+  "category": "veiculos",
+  "expect": {
+   "details.placa": "BRA2E19",
+   "details.renavam": "01234567890",
+   "details.chassi": "9BWAB45U3KT012345",
+   "details.ano": "2019/2020",
+   "details.modelo": "VW/GOL 1.0L MC4",
+   "details.proprietario": "Carlos Eduardo Pereira",
+   "number": "234567891011"
+  }
+ },
+ {
+  "file": "sus.png",
+  "category": "saude",
+  "expect": {
+   "details.cns": "700 0000 0001 0000",
+   "number": "700 0000 0001 0000",
+   "details.nome": "Helena Marques Duarte",
+   "details.nascimento": "1978-09-19"
+  }
+ },
+ {
+  "file": "conta_luz.png",
+  "category": "comprovantes",
+  "expect": {
+   "details.titular": "Bruno Tavares Mendes",
+   "details.cep": "01234-567",
+   "details.referencia": "10/2025",
+   "details.valor": "R$ 187,45",
+   "number": "7654321",
+   "issuedAt": "2025-10-20"
+  }
+ },
+ {
+  "file": "conta_luz_foto.jpg",
+  "category": "comprovantes",
+  "expect": {
+   "details.titular": "Bruno Tavares Mendes",
+   "details.cep": "01234-567",
+   "details.referencia": "10/2025",
+   "details.valor": "R$ 187,45",
+   "number": "7654321",
+   "issuedAt": "2025-10-20"
+  }
+ },
+ {
+  "file": "diploma.png",
+  "category": "educacao",
+  "expect": {
+   "details.instituicao": "Universidade Federal de Exemplo",
+   "details.nome": "Juliana Martins Rocha",
+   "details.curso": "Engenharia Civil",
+   "details.conclusao": "2019-12-15",
+   "issuedAt": "2020-03-10",
+   "number": "45678"
+  }
+ },
+ {
+  "file": "ctps.png",
+  "category": "trabalho",
+  "expect": {
+   "details.nome": "Mariana Silva Costa",
+   "details.cpf": "111.444.777-35",
+   "details.pis": "123.45678.90-1",
+   "details.empresa": "EMPRESA EXEMPLO LTDA",
+   "details.cargo": "ANALISTA DE SISTEMAS",
+   "details.admissao": "2020-02-03"
+  }
+ },
+ {
+  "file": "apolice.png",
+  "category": "seguros",
+  "expect": {
+   "number": "1234567890",
+   "details.segurado": "Rafael Nunes Barbosa",
+   "issuedAt": "2025-02-01",
+   "expiresAt": "2026-02-01",
+   "details.bem": "HONDA CIVIC EXL 2021",
+   "details.contato": "0800 123 4567",
+   "details.seguradora": "SEGURADORA EXEMPLO S.A."
+  }
+ },
+ {
+  "file": "irpf.png",
+  "category": "financas",
+  "expect": {
+   "details.nome": "Paulo Roberto Almeida",
+   "details.cpf": "222.333.444-05",
+   "details.ano": "2024",
+   "details.valor": "R$ 1.234,56"
+  }
+ }
+]
