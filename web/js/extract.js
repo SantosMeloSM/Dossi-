@@ -108,7 +108,7 @@ function near(ctx, labelRe, pick, opts = {}) {
       if (v) return v;
     }
     // Reserva: as linhas seguintes na ordem em que o OCR as entregou
-    if (ctx.geo) for (const line of ctx.lines.filter(l => l.ri > L.ri && l.ri <= L.ri + 2 && !seen.has(l)).sort((a, b) => a.ri - b.ri)) {
+    if (ctx.geo) for (const line of ctx.lines.filter(l => l.ri > L.ri && l.ri <= L.ri + 3 && !seen.has(l)).sort((a, b) => a.ri - b.ri)) {
       if (isLabelOnly(line.n)) continue;
       const v = pick(line.t, line);
       if (v) return v;
