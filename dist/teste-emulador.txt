@@ -5,7 +5,7 @@ APK: app-debug.apk (41M)
   ✔ tela de criação do cofre exibida
     tela: Dossiê | Acesso ao cofre | Dossiê | COFRE PESSOAL DE DOCUMENTOS | Tudo o que prova quem você é, guardado com você. | PRIMEIRO ACESSO | Crie a senha do seu cofre | Ela protege a chave que cifra todos os documentos. Use algo longo e fácil de lembrar, como uma frase. | Senha (mín. 8 caracteres) | ••••••••••••• | Mostrar senha | Confirme a senha | ••••••••••••• | Mostrar senha | Criar meu cofre | Já tenho um backup | Dossiê 2.0 · seus dados ficam só neste aparelho
   (enviado com Enter)
-    tela: Dossiê | Acesso ao cofre | Dossiê | COFRE PESSOAL DE DOCUMENTOS | Tudo o que prova quem você é, guardado com você. | PRIMEIRO ACESSO | Crie a senha do seu cofre | Ela protege a chave que cifra todos os documentos. Use algo longo e fácil de lembrar, como uma frase. | Senha (mín. 8 caracteres) | ••••••••••••• | Mostrar senha | Confirme a senha | ••••••••••••• | Mostrar senha | Criar meu cofre | Já tenho um backup | Dossiê 2.0 · seus dados ficam só neste aparelho
+    tela: Dossiê | Dossiê | Buscar | Ocultar dados sensíveis | Bloquear cofre | DOMINGO, 15 DE NOVEMBRO | Bom dia. | Seu cofre está pronto. Comece pelo documento que você mais usa. | 0 Documentos | 0 | Documentos | 0 Precisam de atenção | 0 | Precisam de atenção | 0 Favoritos | 0 | Favoritos | 0 B | Arquivos cifrados | Cadastro rápido | Escolha o tipo e os campos certos aparecem. | Identidade RG e CIN | CNH Habilitação | CPF Cadastro de pessoa física | Certidões Nascimento, casamento, óbito | Passaporte Passaporte e vistos | Título de eleitor Zona e seção | Comprovantes Endereço e renda | Veículos CRLV, seguro e IPVA | Trabalho Contratos e carteira | Educação Diplomas e históricos | Saúde Cartões, exames e receitas | Finanças Imposto, contratos, bancos | Seguros e garantias Apólices e notas fiscais | Outros Qualquer arquivo importante | Recentes | Nenhum documento ainda | Fotografe ou anexe seu RG
   ✔ cofre criado e chave de recuperação exibida
   ✔ painel inicial carregado
   ✔ editor de documento abriu
@@ -14,32 +14,30 @@ APK: app-debug.apk (41M)
   ✔ desbloqueio com senha funcionou
 
 Leitura automática (OCR real no aparelho) com documentos fictícios:
-  OK   cnh.png 11/11 em 11.3s · Reconheci: CNH. 10 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-  OK   cnh_foto.jpg 11/11 em 6.4s · Reconheci: CNH. 10 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-  OK   cnh_deitada.jpg 11/11 em 5.8s · Reconheci: CNH. 10 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-  OK   rg.png 10/10 em 5.7s · 9 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-  OK   rg_foto.jpg 10/10 em 6.0s · 9 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-  OK   cpf.png 6/6 em 5.2s · Reconheci: CPF. 5 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-  OK   certidao.png 8/8 em 5.7s · Reconheci: Certidões. 8 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-  FALHA certidao_foto.jpg 7/8 em 6.4s · Reconheci: Certidões. 7 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-        details.nome: "" (esperado "Pedro Henrique Moura Santos")
-        texto lido: NOME | MATRÍCULA | REGISTRO CIVIL DAS PESSOAS NATURAIS | PEDRO HENRIQUE MOURA SANTOS | DATA DE NASCIMENTO | REPÚBLICA FEDERATIVA DO BRASIL | 104539 01 55 2012 1 00012 345 0001234 56 | 08/04/2012 | FILIAÇÃO | CERTIDÃO DE NASCIMENTO | Livro: A-123 | SEXO | MARCOS MOURA SANTOS e CLARA MOURA SANTOS | Folha: 45 Termo: 6789 | MASCULINO | Cartório do 29 Ofício de Registro Civil de Belo Horizonte- MG | Data de emissão: 12/07/2012
-  OK   passaporte.png 8/8 em 6.2s · Reconheci: Passaporte. 8 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-  OK   passaporte_foto.jpg 8/8 em 5.7s · Reconheci: Passaporte. 7 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-  OK   titulo.png 8/8 em 4.8s · Reconheci: Título de eleitor. 7 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-  OK   crlv.png 8/8 em 5.8s · Reconheci: Veículos. 8 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-  FALHA crlv_foto.jpg 7/8 em 5.9s · Reconheci: Veículos. 8 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   cnh.png 11/11 em 6.5s · Reconheci: CNH. 10 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   cnh_foto.jpg 11/11 em 5.4s · Reconheci: CNH. 10 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   cnh_deitada.jpg 11/11 em 5.1s · Reconheci: CNH. 10 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   rg.png 10/10 em 4.8s · 9 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   rg_foto.jpg 10/10 em 4.8s · 9 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   cpf.png 6/6 em 4.7s · Reconheci: CPF. 5 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   certidao.png 8/8 em 4.8s · Reconheci: Certidões. 8 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   certidao_foto.jpg 8/8 em 4.9s · Reconheci: Certidões. 8 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   passaporte.png 8/8 em 5.2s · Reconheci: Passaporte. 8 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   passaporte_foto.jpg 8/8 em 4.5s · Reconheci: Passaporte. 7 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   titulo.png 8/8 em 4.0s · Reconheci: Título de eleitor. 7 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   crlv.png 8/8 em 5.0s · Reconheci: Veículos. 8 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  FALHA crlv_foto.jpg 7/8 em 5.0s · Reconheci: Veículos. 8 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
         details.chassi: "9BWAB4503KT012345" (esperado "9BWAB45U3KT012345")
         texto lido: CERTIFICADO DE REGISTRO E LICENCIAMENTO DE VEÍCULO | SENATRAN CRLV DIGITAL | CÓDIGO RENAVAM | 01234567890 | ANO FABRICAÇÃO/ ANO MODELO | 2019/2020 | MARCA / MODELO/VERSÁo | VW/GOL 1.0L MC4 | CHASSI | 9BWAB4503KTO12345 | NOME | CARLOS EDUARDO PEREIRA | LOCAL | CAMPINAS SP | PLACA | BRA2E19 | NO DO CRV | 234567891011 | COR PREDOMINANTE | PRATA | COMBUSTİVEL | EXERCÍCIO | 2025 | ALCOOL/GASOLINA | CPF / CNPJ | 987.654.321-00 | DATA | 15/01/2025
-  OK   sus.png 5/5 em 5.0s · Reconheci: Saúde. 4 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-  OK   conta_luz.png 7/7 em 5.7s · Reconheci: Comprovantes. 7 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-  OK   conta_luz_foto.jpg 7/7 em 4.5s · Reconheci: Comprovantes. 7 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-  OK   diploma.png 7/7 em 4.8s · Reconheci: Educação. 6 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-  OK   ctps.png 7/7 em 5.1s · Reconheci: Trabalho. 6 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-  OK   apolice.png 8/8 em 4.6s · Reconheci: Seguros e garantias. 7 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-  OK   irpf.png 5/5 em 4.5s · Reconheci: Finanças. 5 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
-  DONE 159/161
-  ✔ autoteste de leitura concluído: 159/161 campos corretos
+  OK   sus.png 5/5 em 4.1s · Reconheci: Saúde. 4 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   conta_luz.png 7/7 em 5.0s · Reconheci: Comprovantes. 7 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   conta_luz_foto.jpg 7/7 em 4.0s · Reconheci: Comprovantes. 7 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   diploma.png 7/7 em 4.4s · Reconheci: Educação. 6 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   ctps.png 7/7 em 4.4s · Reconheci: Trabalho. 6 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   apolice.png 8/8 em 4.1s · Reconheci: Seguros e garantias. 7 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   irpf.png 5/5 em 3.9s · Reconheci: Finanças. 5 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  DONE 160/161
+  ✔ autoteste de leitura concluído: 160/161 campos corretos
   ✔ nenhum crash (FATAL EXCEPTION) no logcat
   ✔ nenhum erro de JavaScript
   ✔ processo ainda vivo ao final
