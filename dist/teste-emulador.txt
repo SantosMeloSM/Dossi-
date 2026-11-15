@@ -1,36 +1,78 @@
 Dossiê – teste automático no emulador Android (API 34)
-APK: app-debug.apk (7.5M)
-  ✔ APK instalado
-  ✔ app iniciado
-  ✔ tela de criação do cofre exibida
-  ✔ botão criar cofre tocado
-  ✘ chave de recuperação não apareceu
-  ✘ painel inicial não carregou
-  ✘ modelo CNH não encontrado
-  ✘ documento não apareceu
-  ✘ tela de login não apareceu após reabrir
-  ✘ desbloqueio falhou
-  ✔ nenhum crash (FATAL EXCEPTION) no logcat
-  ✔ nenhum erro de JavaScript
-  ✔ processo ainda vivo ao final
-
-Resultado: 7 ok, 6 falha(s)
-Dossiê – teste automático no emulador Android (API 34)
-APK: app-debug.apk (7.5M)
+APK: app-debug.apk (52M)
   ✔ APK instalado
   ✔ app iniciado
   ✔ tela de criação do cofre exibida
     tela: Dossiê | Acesso ao cofre | Dossiê | COFRE PESSOAL DE DOCUMENTOS | Tudo o que prova quem você é, guardado com você. | PRIMEIRO ACESSO | Crie a senha do seu cofre | Ela protege a chave que cifra todos os documentos. Use algo longo e fácil de lembrar, como uma frase. | Senha (mín. 8 caracteres) | ••••••••••••• | Mostrar senha | Confirme a senha | ••••••••••••• | Mostrar senha | Criar meu cofre | Já tenho um backup | Dossiê 2.0 · seus dados ficam só neste aparelho
   (enviado com Enter)
-    tela: Dossiê | Dossiê | Buscar | Ocultar dados sensíveis | Bloquear cofre | QUINTA-FEIRA, 12 DE NOVEMBRO | Boa noite. | Seu cofre está pronto. Comece pelo documento que você mais usa. | 0 Documentos | 0 | Documentos | 0 Precisam de atenção | 0 | Precisam de atenção | 0 Favoritos | 0 | Favoritos | 0 B | Arquivos cifrados | Cadastro rápido | Escolha o tipo e os campos certos aparecem. | Identidade RG e CIN | CNH Habilitação | CPF Cadastro de pessoa física | Certidões Nascimento, casamento, óbito | Passaporte Passaporte e vistos | Título de eleitor Zona e seção | Comprovantes Endereço e renda | Veículos CRLV, seguro e IPVA | Trabalho Contratos e carteira | Educação Diplomas e históricos | Saúde Cartões, exames e receitas | Finanças Imposto, contratos, bancos | Seguros e garantias Apólices e notas fiscais | Outros Qualquer arquivo importante | Recentes | Nenhum documento ainda | Fotografe ou anexe
+    tela: Dossiê | Acesso ao cofre | Dossiê | COFRE PESSOAL DE DOCUMENTOS | Tudo o que prova quem você é, guardado com você. | PRIMEIRO ACESSO | Crie a senha do seu cofre | Ela protege a chave que cifra todos os documentos. Use algo longo e fácil de lembrar, como uma frase. | Senha (mín. 8 caracteres) | ••••••••••••• | Mostrar senha | Confirme a senha | ••••••••••••• | Mostrar senha | Criar meu cofre | Já tenho um backup | Dossiê 2.0 · seus dados ficam só neste aparelho
   ✔ cofre criado e chave de recuperação exibida
   ✔ painel inicial carregado
   ✔ editor de documento abriu
   ✔ documento salvo
   ✔ reabertura pede a senha (dados persistidos)
   ✔ desbloqueio com senha funcionou
-  ✔ nenhum crash (FATAL EXCEPTION) no logcat
+
+Leitura automática (OCR real no aparelho) com documentos fictícios:
+  FALHA cnh.png 10/11 em 10.1s · Reconheci: CNH. 9 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+        details.primeira: "" (esperado "2009-06-05")
+        texto lido: REPÚBLICA FEDERATIVA DO BRASIL | CARTEIRA NACIONAL DE HABILITAÇÃO | DETRAN-SP | NOME | ANA BEATRIZ SOUZA LIMA | DOC. IDENTIDADE / ÖRG. EMISSOR / UF | 12345678 SSP SP | CPF | 390.533.447-05 | FILIAÇÃo | JOSÉ CARLOS LIMA | MARIA HELENA SOUZA LIMA | PERMISSÃO | NO REGISTRO | 04567891234 | OBSERVAÇÕES | A | LOCAL | SÂO PAULO, SP | ACC | VALIDADE | DATA NASCIMENTO | 14/03/1990 | CAT. HAB. | AB | 20/08/2031 | DATA EMISSÃO | 21/08/2021 | 12 HABILITAÇÃO | 05/06/2009 | SP987654321
+  OK   cnh_foto.jpg 11/11 em 5.9s · Reconheci: CNH. 10 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  FALHA cnh_deitada.jpg 8/11 em 5.8s · Reconheci: CNH. 7 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+        number: "" (esperado "04567891234")
+        details.nome: "" (esperado "Ana Beatriz Souza Lima")
+        details.primeira: "" (esperado "2009-06-05")
+        texto lido: CARTEIRA NACIONAL DE HABILITAÇÃO | REPÜBLICA FEDERATIVA DO BRASIL | NOME | ANA BEATRIZ SOUZA LIMA | DOC. IDENTIDADE / ÖRG. EMISSOR / UF | 12345678 SSP | SP | DATA NASCIMENTO | 14/03/1990 | CPF | 390.533.447-05 | FILIAÇÃo | JOSÉ CARLOS LIMA | MARIA HELENA SOUZA LIMA | CAT. HAB. | ACC | PERMISSÃO | AB | 12 HABILITAÇÃO | 05/06/2009 | VALIDADE | 20/08/2031 | Nº | REGISTRO | 04567891234 | OBSERVAçÕES | A | DATA EMISSÃO | 21/08/2021 | LOCAL | SÃO | PAULO, SP | SP987654321 | DETRAN-SP
+  OK   rg.png 10/10 em 7.3s · 9 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   rg_foto.jpg 10/10 em 5.6s · 9 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   cpf.png 6/6 em 4.8s · Reconheci: CPF. 5 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   certidao.png 8/8 em 5.8s · Reconheci: Certidões. 8 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  FALHA certidao_foto.jpg 7/8 em 6.9s · Reconheci: Certidões. 7 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+        details.nome: "" (esperado "Pedro Henrique Moura Santos")
+        texto lido: NOME | MATRÍCULA | REGISTRO CIVIL DAS PESSOAS NATURAIS | PEDRO HENRIQUE MOURA SANTOS | DATA DE NASCIMENTO | REPÚBLICA FEDERATIVA DO BRASIL | 104539 01 55 2012 1 00012 345 0001234 56 | 08/04/2012 | FILIAÇÃO | CERTIDÃO DE NASCIMENTO | Livro: A-123 | SEXO | MARCOS MOURA SANTOS e CLARA MOURA SANTOS | Folha: 45 Termo: 6789 | MASCULINO | Cartório do 29 Ofício de Registro Civil de Belo Horizonte- MG | Data de emissão: 12/07/2012
+  OK   passaporte.png 8/8 em 5.9s · Reconheci: Passaporte. 8 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   passaporte_foto.jpg 8/8 em 6.2s · Reconheci: Passaporte. 7 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   titulo.png 8/8 em 4.9s · Reconheci: Título de eleitor. 7 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   crlv.png 8/8 em 5.9s · Reconheci: Veículos. 8 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  FALHA crlv_foto.jpg 6/8 em 5.8s · Reconheci: Veículos. 8 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+        details.chassi: "9BWAB4503KT012345" (esperado "9BWAB45U3KT012345")
+        number: "01234567890" (esperado "234567891011")
+        texto lido: CERTIFICADO DE REGISTRO E LICENCIAMENTO DE VEÍCULO | SENATRAN CRLV DIGITAL | CÓDIGO RENAVAM | 01234567890 | ANO FABRICAÇÃO/ ANO MODELO | 2019/2020 | MARCA / MODELO/VERSÁo | VW/GOL 1.0L MC4 | CHASSI | 9BWAB4503KTO12345 | NOME | CARLOS EDUARDO PEREIRA | LOCAL | CAMPINAS SP | PLACA | BRA2E19 | NO DO CRV | 234567891011 | COR PREDOMINANTE | PRATA | COMBUSTİVEL | EXERCÍCIO | 2025 | ALCOOL/GASOLINA | CPF / CNPJ | 987.654.321-00 | DATA | 15/01/2025
+  OK   sus.png 5/5 em 4.6s · Reconheci: Saúde. 4 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   conta_luz.png 7/7 em 5.4s · Reconheci: Comprovantes. 7 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   conta_luz_foto.jpg 7/7 em 4.4s · Reconheci: Comprovantes. 7 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   diploma.png 7/7 em 5.2s · Reconheci: Educação. 6 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  OK   ctps.png 7/7 em 5.1s · Reconheci: Trabalho. 6 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+  FALHA apolice.png 5/8 em 4.8s · Reconheci: Seguros e garantias. 4 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+        issuedAt: "" (esperado "2025-02-01")
+        expiresAt: "" (esperado "2026-02-01")
+        details.bem: "" (esperado "HONDA CIVIC EXL 2021")
+        texto lido: SEGURADORA EXEMPLO S.A. | APÓLICE DE SEGURO AUTOMÓVEL | N° DA APÓLICE | 1234567890 | VIGÊNCIA | 01/02/2025 a 01/02/2 026 | ITEM SEGURAD0 | HONDA CIVIC EXL 2021 | Assistência 24h: 0800 123 4567 | SEGURADO | RAFAEL NUNES BARBOSA
+  FALHA irpf.png 2/5 em 4.9s · 2 campo(s) preenchido(s) automaticamente — confira antes de salvar. Ler de novo
+        categoria "identidade" (esperado financas)
+        details.ano: "" (esperado "2024")
+        details.valor: "" (esperado "R$ 1.234,56")
+        texto lido: DECLARAÇÃO DE AJUSTE ANUAL | IMPOSTO SOBREA RENDA - PESSOA FÍSICA | EXERCİCIO 2025 | NOME | PAULO ROBERTO ALMEIDA | IMPOSTO A RESTITUIR | ANO-CALENDÁRIO 2024 | R$ 1.234,56 | RECEITA FEDERAL DO BRASIL | CPF | 222.333.444-05
+  DONE 148/161
+  ✔ autoteste de leitura concluído: 148/161 campos corretos
+  ✘ crash encontrado no logcat
+11-15 00:51:38.759  3484  3561 E AndroidRuntime: FATAL EXCEPTION: UiAutomation
+11-15 00:51:38.759  3484  3561 E AndroidRuntime: PID: 3484
+11-15 00:51:38.759  3484  3561 E AndroidRuntime: java.lang.RuntimeException: Bad file descriptor
+11-15 00:51:38.759  3484  3561 E AndroidRuntime: 	at android.os.BinderProxy.transactNative(Native Method)
+11-15 00:51:38.759  3484  3561 E AndroidRuntime: 	at android.os.BinderProxy.transact(BinderProxy.java:584)
+11-15 00:51:38.759  3484  3561 E AndroidRuntime: 	at android.accessibilityservice.IAccessibilityServiceConnection$Stub$Proxy.findAccessibilityNodeInfoByAccessibilityId(IAccessibilityServiceConnection.java:1161)
+11-15 00:51:38.759  3484  3561 E AndroidRuntime: 	at android.view.accessibility.AccessibilityInteractionClient.findAccessibilityNodeInfoByAccessibilityId(AccessibilityInteractionClient.java:665)
+11-15 00:51:38.759  3484  3561 E AndroidRuntime: 	at android.view.accessibility.AccessibilityNodeInfo.refresh(AccessibilityNodeInfo.java:1120)
+11-15 00:51:38.759  3484  3561 E AndroidRuntime: 	at android.view.accessibility.AccessibilityCache$AccessibilityNodeRefresher.refreshNode(AccessibilityCache.java:888)
+11-15 00:51:38.759  3484  3561 E AndroidRuntime: 	at android.view.accessibility.AccessibilityCache.onAccessibilityEvent(AccessibilityCache.java:294)
+11-15 00:51:38.759  3484  3561 E AndroidRuntime: 	at android.view.accessibility.AccessibilityInteractionClient.onAccessibilityEvent(AccessibilityInteractionClient.java:1158)
+11-15 00:51:38.759  3484  3561 E AndroidRuntime: 	at android.accessibilityservice.AccessibilityService$IAccessibilityServiceClientWrapper.lambda$onAccessibilityEvent$2(AccessibilityService.java:2925)
+11-15 00:51:38.759  3484  3561 E AndroidRuntime: 	at android.accessibilityservice.AccessibilityService$IAccessibilityServiceClientWrapper.$r8$lambda$09cnCCQeC7txVafv5NeCrjYkmcY(Unknown Source:0)
+11-15 00:51:38.759  3484  3561 E AndroidRuntime: 	at android.accessibilityservice.AccessibilityService$IAccessibilityServiceClientWrapper$$ExternalSyntheticLambda8.run(Unknown Source:6)
+11-15 00:51:38.759  3484  3561 E AndroidRuntime: 	at android.os.Handler.handleCallback(Handler.java:958)
+11-15 00:51:38.759  3484  3561 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:99)
   ✔ nenhum erro de JavaScript
   ✔ processo ainda vivo ao final
 
-Resultado: 12 ok, 0 falha(s)
+Resultado: 12 ok, 1 falha(s)
